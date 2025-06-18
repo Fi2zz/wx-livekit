@@ -1,9 +1,8 @@
 {
   "name": "wx-livekit",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "module": "./index.ts",
   "main": "./index.ts",
-  "types": "./types/wx.d.ts",
   "license": "MIT",
   "dependencies": {
     "mitt": "^3.0.1"

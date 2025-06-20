@@ -200,7 +200,7 @@ export default function createWXLiveKit(context: any, config: KeyValue = {}) {
         stream.attributes.userID !== userID && stream.attributes.userID !== ""
       );
     });
-    // users = users.filter((user) => user.userID !== userID);
+    users.delete(userID)
   }
 
   function _addStream(stream: Player): void {

@@ -1,5 +1,6 @@
 import {
   createPusherFactory,
+  getInitialPusherAttributes,
   parsePusherEvent,
   pickPusherEvent,
   withUserlist,
@@ -49,6 +50,10 @@ export default function createWXLiveKit(context: any, config: KeyValue = {}) {
   let streams: Player[] = [];
   let pusher: Pusher | null = null;
 
+  function withPusher(callback: (pusher: Pusher) => any) {
+    if (!pusher) return;
+    return callback(pusher);
+  }
   // 添加用户
   function addUser(userlist: PusherEventResult["userlist"]): void {
     userlist.forEach((item) => {
@@ -200,7 +205,7 @@ export default function createWXLiveKit(context: any, config: KeyValue = {}) {
         stream.attributes.userID !== userID && stream.attributes.userID !== ""
       );
     });
-    users.delete(userID)
+    users.delete(userID);
   }
 
   function _addStream(stream: Player): void {
@@ -256,12 +261,15 @@ export default function createWXLiveKit(context: any, config: KeyValue = {}) {
 
   // 获取推流器属性
   function getPusherAttributes(): PusherAttributes {
+    if (!pusher) return getInitialPusherAttributes({}) as PusherAttributes;
     return pusher!.attributes;
   }
   // 设置推流器属性
   function setPusherAttributes(attrs: Partial<PusherAttributes>) {
-    logger.log("setPusherAttributes", attrs);
-    pusher!.setAttributes(attrs);
+    withPusher((pusher) => {
+      logger.log("setPusherAttributes", attrs);
+      pusher!.setAttributes(attrs);
+    });
   }
   // 设置播放器属性
   function setPlayerAttributes(
@@ -358,8 +366,10 @@ export default function createWXLiveKit(context: any, config: KeyValue = {}) {
 
   // 处理推流器音量通知
   function pusherAudioVolumeNotify(event: any) {
-    pusher!.attributes.volume = event.detail.volume;
-    emitter.emit(LIVEKIT_EVENT.LOCAL_AUDIO_VOLUME_UPDATE);
+    withPusher((pusher) => {
+      pusher!.attributes.volume = event.detail.volume;
+      emitter.emit(LIVEKIT_EVENT.LOCAL_AUDIO_VOLUME_UPDATE);
+    });
   }
   // 处理播放器状态变化
   function playerStateChange(event: any) {
@@ -401,7 +411,7 @@ export default function createWXLiveKit(context: any, config: KeyValue = {}) {
   // 监听事件
   function on(name: string, handler: Function): void {
     logger.log("监听事件", name);
-    emitter.on("*", (type, payload) => {
+    emitter.on("*", (type: string, payload: any) => {
       if (type == name) handler(payload);
     });
   }
@@ -409,7 +419,7 @@ export default function createWXLiveKit(context: any, config: KeyValue = {}) {
   // 取消监听事件
   function off(name: string, handler?: Function): void {
     logger.log("移除事件", name);
-    emitter.off("*", (type, payload) => {
+    emitter.off("*", (type: string, payload: any) => {
       if (type == name) handler?.(payload);
     });
   }

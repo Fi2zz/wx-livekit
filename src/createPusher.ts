@@ -41,7 +41,7 @@ export interface PusherAttributes {
   [key: string]: any;
 }
 
-function getInitialAttributes(patrial: Partial<PusherAttributes>) {
+export function getInitialPusherAttributes(patrial: Partial<PusherAttributes>) {
   return Object.assign(
     {
       url: "",
@@ -90,7 +90,7 @@ export function createPusherFactory(
   // PusherContext
 ) {
   // 推流器状态
-  let attributes = getInitialAttributes(partial);
+  let attributes = getInitialPusherAttributes(partial);
 
   let context: PusherContext = createLivePusherContext(ctx);
   // 设置推流器属性

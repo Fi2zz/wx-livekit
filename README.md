@@ -221,7 +221,7 @@ const livekit = createWXLiveKit(this, { env: "prod" });
 
 // 创建推流器
 const pusher = livekit.createPusher({
-  url: "rtmp://your-push-url",
+  url: "your-push-url",
   mode: "RTC",
   enableCamera: true,
   enableMic: true,
@@ -243,7 +243,5 @@ livekit.on(LIVEKIT_EVENT.REMOTE_VIDEO_ADD, ({ player }) => {
 // 释放资源
 livekit.dispose();
 ```
-
-## 总结
 
 wx-livekit 是一个功能完善的微信小程序直播套件，通过封装微信小程序的原生组件，提供了更加友好和易用的 API，简化了在微信小程序中实现音视频直播的开发流程。它支持推流、拉流、用户管理和事件系统等功能，是开发微信小程序直播应用的理想选择。
